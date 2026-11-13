@@ -1277,7 +1277,6 @@ app.get('/session/verify', handleVerifySessionCookie);
 app.post('/session/logout', handleSessionLogout);
 app.post('/api/gps/update', handleHardwareGpsUpdate);
 app.post('/api/orders/validate-eligibility', handleValidateOrderEligibility);
-);
 
 // ==========================================
 // HEALTH CHECK
