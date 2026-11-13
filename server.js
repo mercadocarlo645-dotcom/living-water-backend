@@ -1228,21 +1228,55 @@ async function handleValidateOrderEligibility(req, res) {
 // API ROUTES
 // ==========================================
 
+// =========================
+// API ROUTES
+// =========================
+
 app.post('/otp/send', handleSendOtp);
 app.post('/otp/verify', handleVerifyOtp);
+
+app.post('/admin/verify-role', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email || !isValidEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        isAdmin: false,
+        error: 'Invalid email address.',
+      });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const isAdmin = await isStrictAdminEmail(cleanEmail);
+
+    return res.json({
+      success: true,
+      isAdmin,
+      message: isAdmin
+        ? 'Admin account verified.'
+        : 'This email is not registered as an Admin account.',
+    });
+  } catch (error) {
+    console.error('[ADMIN ROLE VERIFY ERROR]', error.message);
+
+    return res.status(500).json({
+      success: false,
+      isAdmin: false,
+      error: 'Failed to verify Admin account.',
+    });
+  }
+});
 
 app.post('/admin/password-reset', handleAdminPasswordReset);
 app.post('/register/complete', handleCompleteRegistration);
 
+// Ilagay rito ang iba mo pang existing routes:
 app.post('/session/create', handleCreateSessionCookie);
 app.get('/session/verify', handleVerifySessionCookie);
 app.post('/session/logout', handleSessionLogout);
-
 app.post('/api/gps/update', handleHardwareGpsUpdate);
-
-app.post(
-  '/api/orders/validate-eligibility',
-  handleValidateOrderEligibility
+app.post('/api/orders/validate-eligibility', handleValidateOrderEligibility);
 );
 
 // ==========================================
